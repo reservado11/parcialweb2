@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Info</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .info-section {
+      background: #f67df6;
+      padding: 30px;
+      border-radius: 12px;
+      max-width: 800px;
+      margin: 40px auto;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      color: #3e2a4b;
+    }
+
+    .info-section img {
+      width: 180px;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .info-section h2 {
+      font-size: 2em;
+      margin-bottom: 10px;
+      color: #9f20b9;
+    }
+
+    .info-section p {
+      font-size: 1.1em;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand">
+        <img src="assets/logo.png" alt="Logo" class="logo" />
+        <h1 class="app-name">facebook</h1>
+      </div>
+      <div class="search-area">
+        <input type="search" id="search" placeholder="Buscar..." />
+      </div>
+    </div>
+  </header>
+
+  <nav class="tabs" role="navigation" aria-label="Navegación principal">
+    <a href="index.html" class="tab">Muro</a>
+    <a href="info.html" class="tab active">Info</a>
+    <a href="photos.html" class="tab">Photos</a>
+    <a href="boxes.html" class="tab">Boxes</a>
+  </nav>
+
+  <main>
+    <section class="info-section">
+      <img src="img/foto1.jpg" alt="Foto de Camila Rodríguez" />
+
+      <h2>Camila Rodríguez</h2>
+      <p><strong>Cumpleaños:</strong> 11 de mayo 2004</p>
+      <p><strong>Correo:</strong> camila.rodriguez@email.com</p>
+      <p><strong>Estudiante de Ingeniería</strong></p>
+      <p><strong>Nacionalidad:</strong> Colombiana</p>
+      <p><strong>Ciudad:</strong> Medellín</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Mi Perfil SPA</p>
+  </footer>
+</body>
+</html>

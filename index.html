@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Parcial1 - Muro</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand">
+        <img src="assets/logo.png" alt="Logo" class="logo" />
+        <h1 class="app-name">facebook</h1>
+      </div>
+      <div class="search-area">
+        <input type="search" id="search" placeholder="Buscar..." />
+      </div>
+    </div>
+  </header>
+
+  <nav class="tabs" role="navigation" aria-label="Navegación principal">
+    <button class="tab active" data-target="muro">Muro</button>
+    <button class="tab" data-target="info">Info</button>
+    <button class="tab" data-target="photos">Photos</button>
+    <button class="tab" data-target="boxes">Boxes</button>
+  </nav>
+
+  <main class="container">
+    <aside class="profile-side" aria-label="Perfil">
+      <div class="avatar">
+        <img src="assets/perfil.jpg" alt="Foto de perfil" class="avatar-img" />
+      </div>
+      <h2 class="profile-name">Nombre de Mujer Real</h2>
+      <ul class="profile-info">
+        <li><strong>Situación sentimental:</strong> Soltera</li>
+        <li><strong>Hobby:</strong> Leer</li>
+      </ul>
+      <div class="profile-photo-space" style="margin-top: 20px;">
+        <!-- Espacio para foto si quieres agregar -->
+      </div>
+    </aside>
+
+    <section class="profile-main">
+      <div>
+        <h3>Muro</h3>
+
+        <!-- Publicación fija solo con texto -->
+        <div class="post-fixed" style="margin-bottom: 20px; padding: 10px; background: #f4c5f3; border-radius: 8px; color: #3e2a4b; font-weight: 600; box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.6);">
+          "Leer es mágico"
+        </div>
+
+        <!-- Área para escribir y compartir publicación -->
+        <textarea placeholder="Pon algo aquí..."></textarea>
+        <button class="btn" id="shareBtn">Compartir</button>
+
+        <!-- Aquí se mostrarán las publicaciones que el usuario comparta -->
+        <div id="userPosts" style="margin-top: 30px;"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Mi Perfil SPA</p>
+  </footer>
+
+  <script>
+    const shareBtn = document.getElementById("shareBtn");
+    const userPosts = document.getElementById("userPosts");
+    const textarea = document.querySelector("textarea");
+
+    shareBtn.addEventListener("click", () => {
+      const text = textarea.value.trim();
+      if (!text) {
+        alert("Por favor, escribe algo para compartir.");
+        return;
+      }
+
+      const postDiv = document.createElement("div");
+      postDiv.className = "post-fixed";
+      postDiv.style.marginBottom = "15px";
+      postDiv.style.padding = "10px";
+      postDiv.style.background = "#f4c5f3";
+      postDiv.style.borderRadius = "8px";
+      postDiv.style.color = "#3e2a4b";
+      postDiv.style.fontWeight = "600";
+      postDiv.style.boxShadow = "inset 0 1px 2px rgba(255, 255, 255, 0.6)";
+      postDiv.textContent = text;
+
+      userPosts.prepend(postDiv);
+
+      textarea.value = "";
+    });
+  </script>
+</body>
+</html>

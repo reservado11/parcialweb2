@@ -5,14 +5,14 @@ document.addEventListener("DOMContentLoaded", () => {
   tabs.forEach(tab => {
     const target = tab.dataset.target;
     let file = target + ".html";
-    if (target === "muro") file = "index.html"; // excepción para muro
+    if (target === "muro") file = "index.html"; 
 
-    // Marcar activo automáticamente
+    
     if (file === currentPage || (currentPage === "" && file === "index.html")) {
       tab.classList.add("active");
     }
 
-    // Redirección
+    
     tab.addEventListener("click", () => {
       window.location.href = file;
     });

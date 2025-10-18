@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>💖 Pac-Mini Mejorado</title>
+<style>
+  body {
+    background: black;
+    margin: 0;
+    text-align: center;
+    color: white;
+    font-family: Arial, sans-serif;
+  }
+  canvas {
+    background: #00004f;
+    display: block;
+    margin: 20px auto;
+    border: 3px solid #8b00ff;
+  }
+  button {
+    background: #ff4fd8;
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    font-size: 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+</style>
+</head>
+<body>
+<h2>💖 Usa las flechas para moverte — El fantasma te persigue y a veces se mueve al azar</h2>
+<canvas id="game" width="880" height="600"></canvas>
+<button id="restart" style="display:none;">🔁 Jugar de nuevo</button>
+
+<script>
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+
+const grid = 40;
+const map = [
+ [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+ [1,0,0,0,0,0,1,0,0,0,1,0,0,0,0,1,0,0,0,0,0,1],
+ [1,0,1,1,0,0,1,0,1,0,1,0,1,0,0,1,0,1,1,1,0,1],
+ [1,0,0,1,0,0,0,0,1,0,0,0,1,0,1,0,0,0,0,0,0,1],
+ [1,0,1,1,1,1,1,0,1,0,1,0,1,1,1,0,1,1,1,0,1,1],
+ [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+ [1,0,1,1,1,0,1,1,1,0,1,1,1,0,1,1,1,0,1,1,0,1],
+ [1,0,0,0,1,0,0,0,1,0,1,0,0,0,1,0,0,0,1,0,0,1],
+ [1,0,1,0,1,1,0,1,1,1,1,1,0,1,1,0,1,1,0,1,0,1],
+ [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+ [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+];
+
+let pac = {x: 1, y: 1, dx: 0, dy: 0, speed: 0.15};
+let ghost = {x: 20, y: 9, dx: 0, dy: 0, speed: 0.12};
+let gameOver = false;
+
+function drawMap() {
+  for (let y = 0; y < map.length; y++) {
+    for (let x = 0; x < map[y].length; x++) {
+      if (map[y][x] === 1) {
+        ctx.fillStyle = "#001a8d";
+        ctx.fillRect(x * grid, y * grid, grid, grid);
+      } else {
+        ctx.fillStyle = "#00004f";
+        ctx.fillRect(x * grid, y * grid, grid, grid);
+      }
+    }
+  }
+}
+
+function drawPac() {
+  ctx.save();
+  ctx.translate(pac.x * grid + grid/2, pac.y * grid + grid/2);
+  ctx.fillStyle = "#ff7acb";
+  ctx.beginPath();
+  ctx.arc(0, 0, grid/2 - 2, 0.25*Math.PI, 1.75*Math.PI);
+  ctx.lineTo(0,0);
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawGhost() {
+  const gx = ghost.x * grid;
+  const gy = ghost.y * grid;
+  ctx.fillStyle = "#c974ff";
+  ctx.beginPath();
+  ctx.arc(gx + grid/2, gy + grid/2, grid/2 - 2, Math.PI, 2*Math.PI);
+  ctx.rect(gx + 5, gy + grid/2, grid - 10, grid/2 - 3);
+  ctx.fill();
+  // Ojos
+  ctx.fillStyle = "white";
+  ctx.beginPath(); ctx.arc(gx + grid/2 - 8, gy + grid/2 - 8, 5, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(gx + grid/2 + 8, gy + grid/2 - 8, 5, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = "black";
+  ctx.beginPath(); ctx.arc(gx + grid/2 - 8, gy + grid/2 - 8, 2, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(gx + grid/2 + 8, gy + grid/2 - 8, 2, 0, Math.PI*2); ctx.fill();
+}
+
+function movePac() {
+  const nx = pac.x + pac.dx * pac.speed;
+  const ny = pac.y + pac.dy * pac.speed;
+  if (!collides(nx, ny)) {
+    pac.x = nx;
+    pac.y = ny;
+  }
+}
+
+function collides(x, y) {
+  const col = Math.floor(x);
+  const row = Math.floor(y);
+  return map[row] && map[row][col] === 1;
+}
+
+// Fantasma: sigue si está cerca, se mueve al azar si está lejos
+function moveGhost() {
+  const dist = Math.hypot(pac.x - ghost.x, pac.y - ghost.y);
+  let dirs = [
+    {dx:1, dy:0}, {dx:-1, dy:0}, {dx:0, dy:1}, {dx:0, dy:-1}
+  ];
+
+  if (dist < 6) {
+    // Persigue
+    dirs.sort((a,b)=>{
+      let da = Math.hypot((ghost.x + a.dx) - pac.x, (ghost.y + a.dy) - pac.y);
+      let db = Math.hypot((ghost.x + b.dx) - pac.x, (ghost.y + b.dy) - pac.y);
+      return da - db;
+    });
+  } else {
+    // Aleatorio
+    dirs.sort(()=>Math.random()-0.5);
+  }
+
+  for (let d of dirs) {
+    let nx = ghost.x + d.dx * ghost.speed;
+    let ny = ghost.y + d.dy * ghost.speed;
+    if (!collides(nx, ny)) {
+      ghost.x = nx;
+      ghost.y = ny;
+      break;
+    }
+  }
+}
+
+function checkCollision() {
+  const dist = Math.hypot(pac.x - ghost.x, pac.y - ghost.y);
+  if (dist < 0.6) {
+    gameOver = true;
+    document.getElementById("restart").style.display = "block";
+  }
+}
+
+function loop() {
+  if (!gameOver) {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    drawMap();
+    movePac();
+    moveGhost();
+    drawPac();
+    drawGhost();
+    checkCollision();
+    requestAnimationFrame(loop);
+  } else {
+    ctx.fillStyle = "white";
+    ctx.font = "40px Arial";
+    ctx.fillText("💀 ¡El fantasma te atrapó! 💀", 250, 280);
+  }
+}
+
+document.addEventListener("keydown", e=>{
+  if (e.key==="ArrowUp"){pac.dx=0; pac.dy=-1;}
+  if (e.key==="ArrowDown"){pac.dx=0; pac.dy=1;}
+  if (e.key==="ArrowLeft"){pac.dx=-1; pac.dy=0;}
+  if (e.key==="ArrowRight"){pac.dx=1; pac.dy=0;}
+});
+
+document.getElementById("restart").addEventListener("click",()=>{
+  pac={x:1,y:1,dx:0,dy:0,speed:0.15};
+  ghost={x:20,y:9,dx:0,dy:0,speed:0.12};
+  gameOver=false;
+  document.getElementById("restart").style.display="none";
+  loop();
+});
+
+loop();
+</script>
+</body>
+</html>
